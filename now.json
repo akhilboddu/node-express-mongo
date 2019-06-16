@@ -1,9 +1,0 @@
-{
-    "version": 1,
-    "name": "node-express-mongo",
-    "builds": [
-      { "src": "public/**/*", "use": "@now/static" },
-      { "src": "src/**/*.js", "use": "@now/node" }
-    ],
-    "routes": [{ "src": "/", "dest": "public/index.html" }]
-  }

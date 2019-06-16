@@ -1,15 +1,19 @@
 /** Demo model */
-const CustomerModel = require('../model/customer.model')
+const TodosModel = require('../model/todos.model')
 const express = require('express')
 const router = express.Router()
 
-// Create a new customer
-router.post('/customer', (req, res) => {
+// Create new Todo
+router.post('/todo', (req, res) => {
     if(!req.body) {
         return res.status(400).send('Request body is missing')
     }
     
-    const model = new CustomerModel(req.body)
+    let newObj = {
+        ...req.body,
+        complete: false
+    }
+    const model = new TodosModel(newObj)
     model.save()
         .then(doc => {
             if(!doc || doc.length === 0) {
@@ -22,12 +26,10 @@ router.post('/customer', (req, res) => {
         })
 })
 
-// Get Customer Email
-router.get('/customer/:email', (req, res) => {
-    if(!req.params.email) return res.status(400).send('Missing URL param email')
-    CustomerModel.findOne({
-        email: req.params.email
-    })
+// Get Todo
+router.get('/todo/:id', (req, res) => {
+    if(!req.params.id) return res.status(400).send('Missing URL param id')
+    TodosModel.findById(req.params.id)
         .then(doc => {
             res.json(doc)
         })
@@ -37,14 +39,14 @@ router.get('/customer/:email', (req, res) => {
 })
 
 // Update an existing customer
-router.put('/customer/:email', (req, res) => {
-    if(!req.params.email) return res.status(400).send('Missing URL param email')
-    CustomerModel.findOneAndUpdate({
-        email: req.params.email
-    }, req.body, {
-        new: true
+router.put('/todo/complete/:id', (req, res) => {
+    if(!req.params.id) return res.status(400).send('Missing URL param id')
+    const newObj = {
+        ...req.body,
+        complete: !req.body.complete
     }
-    )
+    console.log(newObj, 'testing')
+    TodosModel.findByIdAndUpdate(req.params.id, newObj, {new: true})
         .then(doc => {
             res.json(doc)
         })
@@ -54,11 +56,9 @@ router.put('/customer/:email', (req, res) => {
 })
 
 // delete a customer
-router.delete('/customer/:email', (req, res) => {
-    if(!req.params.email) return res.status(400).send('Missing URL param email')
-    CustomerModel.findOneAndRemove({
-        email: req.params.email
-    })
+router.delete('/todo/:id', (req, res) => {
+    if(!req.params.id) return res.status(400).send('Missing URL param id')
+    TodosModel.findByIdAndRemove(req.params.id)
         .then(doc => {
             res.json(doc)
         })
@@ -68,8 +68,8 @@ router.delete('/customer/:email', (req, res) => {
 })
 
 // Get all customers
-router.get('/customers', (req, res) => {
-    CustomerModel.find()
+router.get('/todos', (req, res) => {
+    TodosModel.find()
         .then(doc => {
             res.json(doc)
         })

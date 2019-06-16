@@ -3,8 +3,8 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const app = express()
 
-const customerRoute = require('./routes/customer')
-const personRoute = require('./routes/person')
+const customerRoute = require('./src/routes/customer')
+const personRoute = require('./src/routes/person')
 
 app.use(bodyParser.json()) 
 
